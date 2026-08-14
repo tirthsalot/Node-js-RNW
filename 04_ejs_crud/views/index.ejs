@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejs</title>
+</head>
+<body>
+
+    <h1>Company List</h1>
+
+    <a href="/add">Add Company</a>
+
+    <ul>
+        <% company.forEach((c)=>{%>
+        <li>
+            <%= c.name%>
+        </li>
+        <%})%>
+    </ul>
+
+
+    
+</body>
+</html>
