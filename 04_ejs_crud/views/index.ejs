@@ -12,14 +12,18 @@
     <a href="/add">Add Company</a>
 
     <ul>
-        <% company.forEach((c)=>{%>
+        <% company.forEach((c) => { %>
+
         <li>
-            <%= c.name%>
+            <%= c.name %>
+
+            <a href="/delete/<%= c.id %>">Delete</a>
+
+            <a href="/edit/<%= c.id %>">Edit</a>
         </li>
-        <%})%>
+
+        <% }) %>
     </ul>
 
-
-    
 </body>
 </html>

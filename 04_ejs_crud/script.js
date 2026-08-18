@@ -9,13 +9,15 @@ app.set("view engine","ejs")
 
 
 
-const company = [
+let company = [
 
     {
+        id:1,
         name:"Nirma",
         year:1999
     },
     {
+        id:2,
         name:"Excel",
         year:2001
     }
@@ -44,6 +46,57 @@ app.post("/add",(req,res)=>{
 
     res.redirect("/")
 })
+
+app.get("/delete/:id",(req,res)=>{
+
+    const { id } = req.params
+
+    const Foundcompany = company.find((c)=>c.id === Number(id));
+
+    if(!Foundcompany){
+        return res.json({message:"company not found"})
+    }
+
+    company = company.filter((c)=>c.id !== Foundcompany.id);
+
+    res.redirect("/");
+
+})
+
+app.get("/edit/:id",(req,res)=>{
+
+    const { id } = req.params
+
+    const Foundcompany  = company.find((c)=>c.id === Number(id));
+
+    if(!Foundcompany){
+
+        return res.json({message:"company not found"})
+    }
+
+  
+   res.render("edit",{company:Foundcompany})
+})
+
+app.post("/edit/:id",(req,res)=>{
+
+    const {id} = req.params
+
+    const Foundcompany = company.find((c)=>c.id === Number(id));
+
+    if(!Foundcompany){
+
+        return res.json({message:"company not found"})
+    }
+
+    const { name } = req.body
+    
+    Foundcompany.name = name;
+
+    res.redirect("/");
+})
+
+
 
 const port = 5000;
 
