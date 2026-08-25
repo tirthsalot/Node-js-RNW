@@ -3,7 +3,7 @@ import http from "http";
 
 const server = http.createServer((req, res) => {
 
-    res.end("Welcome to my first server");
+    res.send("Welcome to my first server");
 });
 
 const PORT = 5000;

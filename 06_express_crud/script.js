@@ -36,6 +36,27 @@ app.get("/taskList",(req,res,next)=>{
     res.status(200).json({message:"data added successfully",taskList})
 })
 
+app.get("/taskList/:id",(req,res,next)=>{
+
+    try{
+        const {id} = req.params
+
+        const task = taskList.find((t)=>t.id === Number(id));
+
+        if(!task){
+
+            return res.status(200).json({message:"No task data available"})
+        }
+
+        res.staus(200).json({message:"id Visible",task})
+    }
+
+    catch(error){
+        return next(new HttpError("Request Not Found"));
+        
+    }
+})
+
 // undefined middleware
 
 app.use((req,res,next)=>{
