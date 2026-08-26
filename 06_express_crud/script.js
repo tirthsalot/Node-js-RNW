@@ -3,7 +3,11 @@ import express from "express";
 
 import HttpError from "./middleware/HttpError.js";
 
+
 const app = express();
+
+app.use(express.json())
+
 
 const taskList = [
     {
@@ -56,7 +60,90 @@ app.get("/taskList/:id",(req,res,next)=>{
         
     }
 })
+//create
 
+app.post("/task/add",(req,res,next)=>{
+
+    const { task, description} = req.body;
+
+    if (!task || !description) {
+        return next(new HttpError("Task or description date are required",400));
+    }
+
+    const newTask = {
+        id: new Date().getTime(),
+        task,
+        description,
+    };
+
+    taskList.push(newTask);
+
+    res.status(201).json({success: true, message:"New task added successfully",newTask});
+
+
+
+});
+
+//Delete 
+
+app.delete("/task/:id",(req,res,next)=>{
+
+    try {
+        const { id } = req.params;
+
+        const deleteData = taskList.findIndex((t)=>t.id === Number(id));
+
+        if(deleteData === -1){
+
+            return next(new HttpError("task not found in id",404));
+        }
+        taskList.splice(deleteData,1);
+
+        res.status(200).json({success:true,message:"task deleted successfully"});
+
+    } catch (err) {
+
+        return next(new HttpError("Request Not Found"));
+        
+    }
+})
+
+//Update
+
+app.patch("/UpdateTask/:id",(req,res,next)=>{
+
+    try{
+
+        const {id} = req.params;
+
+        const {task,description} = req.body;
+
+        const dataTask = taskList.find((t)=>t.id === Number(id));
+
+        if(dataTask === undefined && taskList === undefined){
+
+            return next(new HttpError("task not found id is updated",400));
+        }
+
+        if(task){
+            dataTask.task = task;
+        }
+        if(description){
+            dataTask.description = description;
+        }
+
+        if(task === undefined && taskList === undefined){
+    return next(new HttpError("task or description data is required", 400));
+
+        }
+
+        res.status(200).json({success:true,message:"task data updated",dataTask});
+
+    }catch(err){
+        return next(new HttpError("request not found "))
+    }
+
+})
 // undefined middleware
 
 app.use((req,res,next)=>{
