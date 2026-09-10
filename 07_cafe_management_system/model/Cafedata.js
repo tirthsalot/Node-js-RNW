@@ -18,7 +18,7 @@ const CafeSchema = new mongoose.Schema({
     },
     menu:{
         type:String,
-        enum:["shakes","coffee","beverages","snakes","cold-drinks"],
+        enum:["shakes","coffee","beverages","snakes","pizza"],
         default:"Shakes"
     }
 })

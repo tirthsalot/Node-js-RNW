@@ -1,65 +1,67 @@
-
-
 import express from "express";
 import HttpError from "./middleware/httperror.js";
+import connectDB from "./config/db.js";
 
 const app = express();
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
 
-    return res.json({massage:"Cafe management system"});
+    return res.json({
+        message: "Cafe management system"
+    });
 
-})
-
-app.use((req,res,next)=>{
-
-    return next(new httpError("request not found",404))
-    
-})
+});
 
 
-app.use((error,req,res,next)=>{
+app.use((req, res, next) => {
 
-    if(res.headersSent){
+    return next(
+        new HttpError("Request not found", 404)
+    );
 
-        return next(new httpError(error.massage));
+});
 
+
+app.use((error, req, res, next) => {
+
+    if (res.headersSent) {
+        return next(error);
     }
 
-    return res.status(error.statusCode || 500).json({massage:error.massage || "internal server error"});
+    return res
+        .status(error.statusCode || 500)
+        .json({
+            message: error.message || "Internal server error"
+        });
 
-})
+});
+
 
 const port = 5000;
 
 
 async function startServer() {
-    
-    try{
+
+    try {
 
         const connect = await connectDB();
 
-        if(!connect){
-            throw new Error("failed to connect db")
+        if (!connect) {
+            throw new Error("Failed to connect DB");
         }
 
+        app.listen(port, () => {
 
-     app.listen(port,(err)=>{
+            console.log(`Server running on port ${port}`);
 
-       if(err){
-   
-           console.log(err)
+        });
 
-        }
-    console.log(`server running on port ${port}`);
-    
-})
+    } catch (err) {
 
-    }catch(err){
-
-        console.log(err.massage);
+        console.log(err.message);
 
     }
+
 }
 
 startServer();
