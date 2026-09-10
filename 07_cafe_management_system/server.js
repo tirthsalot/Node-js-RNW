@@ -2,7 +2,6 @@
 
 import express from "express";
 import HttpError from "./middleware/httperror.js";
-import connectDB from "./config/DB.js";
 
 const app = express();
 
