@@ -1,8 +1,13 @@
 import express from "express";
 import HttpError from "./middleware/httperror.js";
 import connectDB from "./config/db.js";
+import cafeRoutes from "./routes/cafe.routes.js"
 
 const app = express();
+
+app.use(express.json())
+
+app.use("/cafe",cafeRoutes)
 
 app.get("/", (req, res) => {
 
