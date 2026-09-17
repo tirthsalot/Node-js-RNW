@@ -65,6 +65,70 @@ const getCafeById = async (req,res,next) => {
     }
 };
 
+// const updateCafe = async (req,res,next) =>{
+//     try {
+//         const {id} = req.params;
+
+//         const updateCafeData = await Cafe.findByIdAndUpdate(id, req.body, {
+//             new:true,
+//         })
+
+//         if(!updateCafeData){
+//             return next(new HttpError("cafe data not updated", 400));
+//         }
+
+//         res.status(200).json({
+//             success:true,
+//             message:"cafe data updated successfully",
+//             updateCafeData,
+//         });
+        
+//     } catch (error) {
+//         return next(new HttpError(error.message,500));
+        
+//     }
+// };
+
+const updateDataManually = async (req,res,next) => {
+    try {
+        const {id} = req.params;
+
+        const cafeUpdate = await cafe.findById(id);
+
+        if(!cafeUpdate) {
+            return next(new HttpError("cafe not found this id", 404));
+        }
+
+        const updates = Object.keys(req.body);
+
+        console.log("updates",updates);
+
+        const allowedFields = ["name","email","mobileNumber"];
+
+        const isValidUpdate = updates.every((u) => allowedFields.includes(u));
+
+        console.log("is valid update",isValidUpdate);
+
+        if (!isValidUpdate){
+            return next(new HttpError("only allowed field can be update", 400));
+        }
+
+        updates.forEach((update) => (cafeUpdate[update] = req.body[update]));
+
+        await cafeUpdate.save();
+
+        res.status(200).json({
+            success:true,
+            message:"cafe updated successfully",
+            cafeUpdate,
+        });
+    } catch (error) {
+        return next(new HttpError(error.message,500))
+        
+    }
+};
+
+
 const deleteCafe = async (req,res,next)=>{
     try {
         const {id} = req.params;
@@ -106,4 +170,6 @@ export default {
     getCafeById,
     deleteCafe,
     deleteAllData,
+    updateDataManually
+
 }

@@ -14,5 +14,9 @@ Routes.get("/:id", cafeController.getCafeById);
 
 Routes.delete("/:id", cafeController.deleteCafe);
 
+// Routes.patch("/:id", cafeController.updateCafe);
+
+Routes.patch("/:id", cafeController.updateDataManually);
+
 export default Routes;
 
