@@ -1,8 +1,8 @@
 
-class httperror extends Error{
-    constructor(message,statuscode){
+class httpError extends Error{
+    constructor(message,statusCode){
         super(message)
-        this.statuscode=statuscode;
+        this.statusCode=statusCode;
     }
 }
-export default httperror;
+export default httpError;
