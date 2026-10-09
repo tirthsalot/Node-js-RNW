@@ -7,6 +7,10 @@ dotenv.config({path:"./.env"});
 
 const app = express();
 
+app.use(express.json());
+
+app.use("/travel",travelRouter);
+
 app.get("/", (req, res) => {
   res.json("Welcome To The TripMate");
 });
