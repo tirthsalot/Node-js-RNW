@@ -9,4 +9,10 @@ const router = express.Router();
 
 router.post("/add",upload.single("image",travelController.add));
 
+router.get("/getAllPackage", travelController.getAllPackages);
+
+router.get("/:id", travelController.getPackageById);
+
+router.delete("/:id", travelController.deletePackage);
+
 export default router;
