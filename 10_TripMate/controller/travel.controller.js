@@ -1,6 +1,6 @@
 import Travel from "../model/travel.model.js";
 import HttpError from "../middleware/HttpError.js";
-import cloudinary from "../config/cloudinary.js"
+import cloudinary from "../config/cloudinary.js";
 
 const add = async (req, res, next) => {
   try {
@@ -48,63 +48,124 @@ const add = async (req, res, next) => {
     next(new HttpError(500, error.message));
   }
 };
+
 const getAllPackages = async (req, res, next) => {
   try {
     const packages = await Travel.find();
 
     if (packages.length === 0) {
-      return next(new HttpError("no package data found", 404));
+      return next(new HttpError(404, "No package data found"));
     }
 
     res.status(200).json({
       success: true,
       total: packages.length,
-      message: "all packages data fetched successfully",
+      message: "All packages fetched successfully",
       packages,
     });
   } catch (error) {
-    next(new httpError(error.message, 500));
+    next(new HttpError(500, error.message));
   }
 };
+
 const getPackageById = async (req, res, next) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
 
-    const TravelPackage = await Travel.findById(id);
+    const travelPackage = await Travel.findById(id);
 
-    if (!TravelPackage) {
-      return next(new HttpError("package not found with this id", 404));
+    if (!travelPackage) {
+      return next(new HttpError(404, "Package not found with this ID"));
     }
 
-    res
-      .status(200)
-      .json({ success: true, message: "package found", TravelPackage });
+    res.status(200).json({
+      success: true,
+      message: "Package found successfully",
+      travelPackage,
+    });
   } catch (error) {
-    next(new HttpError(error.message, 500));
+    next(new HttpError(500, error.message));
   }
 };
+
 const deletePackage = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
 
-    const packageDelete = await Travel.findById(id);
+    const travelPackage = await Travel.findById(id);
 
-    if (!packageDelete) {
-      return next(new HttpError("failed to delete this package", 400));
+    if (!travelPackage) {
+      return next(new HttpError(404, "Package not found"));
     }
 
-    await cloudinary.uploader.destroy(packageDelete.cloudinary_id);
+    await travelPackage.deleteOne();
 
-    await packageDelete.deleteOne();
-
-    res
-      .status(200)
-      .json({ success: true, message: "package delete successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Package deleted successfully",
+    });
   } catch (error) {
-    next(new HttpError(error.message, 500));
+    next(new HttpError(500, error.message));
   }
 };
 
+const updatePackageDetail = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-export default {add,getAllPackages,getPackageById,deletePackage};
+    const travelPackage = await Travel.findById(id);
 
+    if (!travelPackage) {
+      return next(new HttpError(404, "Package not found"));
+    }
+
+    const allowedFields = [
+      "destination",
+      "country",
+      "packageName",
+      "duration",
+      "price",
+      "description",
+    ];
+
+    const updates = Object.keys(req.body);
+
+    const isValidUpdates = updates.every((field) =>
+      allowedFields.includes(field)
+    );
+
+    if (!isValidUpdates) {
+      return next(
+        new HttpError(400, "Only allowed fields can be updated")
+      );
+    }
+
+    updates.forEach((field) => {
+      travelPackage[field] = req.body[field];
+    });
+
+    const travelImage = req.files?.travelImage?.[0]?.path;
+
+    if (travelImage) {
+      travelPackage.travelImage = travelImage;
+    }
+
+    await travelPackage.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Package updated successfully",
+      travelPackage,
+    });
+  } catch (error) {
+    next(new HttpError(500, error.message));
+  }
+};
+
+export default {
+  add,
+  getAllPackages,
+  getPackageById,
+  deletePackage,
+  updatePackageDetail,
+};
